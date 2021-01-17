@@ -1,7 +1,8 @@
 import { NativeModules } from 'react-native';
 
 type AddressAutocompleteType = {
-  multiply(a: number, b: number): Promise<number>;
+  getAddressSuggestions(address: string): Promise<string[]>;
+  getAddressDetails(address: string): Promise<any[]>;
 };
 
 const { AddressAutocomplete } = NativeModules;
