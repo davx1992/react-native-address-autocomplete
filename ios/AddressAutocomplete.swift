@@ -7,6 +7,8 @@ class AddressAutocomplete: NSObject, MKLocalSearchCompleterDelegate {
     var resolver: RCTPromiseResolveBlock?
     var rejecter: RCTPromiseRejectBlock?
     let completer: MKLocalSearchCompleter = MKLocalSearchCompleter();
+    var searchRequest: MKLocalSearch.Request?
+    var localSearch: MKLocalSearch?
 
     override init() {
         super.init()
@@ -16,6 +18,9 @@ class AddressAutocomplete: NSObject, MKLocalSearchCompleterDelegate {
     @objc(getAddressSuggestions:withResolver:withRejecter:)
     func getAddressSuggestions(address: String!, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
         DispatchQueue.main.async {
+            if self.completer.isSearching {
+                self.completer.cancel()
+            }
             self.completer.queryFragment = address
             self.resolver = resolve
             self.rejecter = reject
@@ -29,25 +34,45 @@ class AddressAutocomplete: NSObject, MKLocalSearchCompleterDelegate {
     @objc(getAddressDetails:withResolver:withRejecter:)
     func getAddressDetails(address: String!, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
         DispatchQueue.main.async {
-            let searchRequest = MKLocalSearch.Request()
-            searchRequest.naturalLanguageQuery = address;
+            if self.localSearch?.isSearching == true {
+                print("Canceling request")
+                self.localSearch?.cancel()
+            }
+            self.searchRequest = MKLocalSearch.Request()
+            self.searchRequest?.naturalLanguageQuery = address
+            self.localSearch = MKLocalSearch(request: self.searchRequest!);
             
-            let search = MKLocalSearch(request: searchRequest)
-            search.start { (response, error) in
+
+            self.localSearch?.start { (response, error) in
                 guard let response = response else {
                     print("Error: \(error?.localizedDescription ?? "Unknown error").")
+                    self.rejecter?("address_autocomplete", "Unknown error", error)
                     return
                 }
 
-                for item in response.mapItems {
-                    print(item)
-                }
+                let items = response.mapItems;
+                let item = items[0]
+                
+                let details:[String: Any] = [
+                    "title": item.placemark.title! as String,
+                    "coordinate": [
+                        "longitude": item.placemark.coordinate.longitude as Double,
+                        "latitude": item.placemark.coordinate.latitude as Double
+                    ],
+                    "region": [
+                        "longitude": response.boundingRegion.center.longitude as Double,
+                        "latitude": response.boundingRegion.center.latitude as Double,
+                        "latitudeDelta": response.boundingRegion.span.latitudeDelta,
+                        "longitudeDelta": response.boundingRegion.span.longitudeDelta
+                    ]
+                ]
+                
+                resolve(details)
             }
         }
     }
 
     func completerDidUpdateResults(_ completer: MKLocalSearchCompleter) {
-        print("Called") // Prints
         let results = completer.results.flatMap { (result) -> String? in
             return result.title + " " + result.subtitle
         }
@@ -56,7 +81,8 @@ class AddressAutocomplete: NSObject, MKLocalSearchCompleterDelegate {
     }
 
     func completer(_ completer: MKLocalSearchCompleter, didFailWithError error: Error) {
-        print(error) // Prints
+        self.rejecter?("address_autocomplete", "An error occured", error)
+        print(error)
     }
 
     @objc(multiply:withB:withResolver:withRejecter:)

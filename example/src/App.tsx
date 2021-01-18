@@ -18,9 +18,13 @@ export default function App() {
 
   const onChange = async (text: string) => {
     setEnteredAddress(text);
-    AddressAutocomplete.getAddressSuggestions(text).then((addresses) => {
-      setSuggestions(addresses);
-    });
+    AddressAutocomplete.getAddressSuggestions(text)
+      .then((addresses) => {
+        setSuggestions(addresses);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   return (
@@ -40,16 +44,19 @@ export default function App() {
             {suggestions.map((address, index) => {
               return (
                 <TouchableOpacity
+                  key={index}
                   onPress={async () => {
-                    console.log('search');
-
-                    const addressDetails = await AddressAutocomplete.getAddressDetails(
-                      address
-                    );
-                    console.log(addressDetails);
+                    try {
+                      const addressDetails = await AddressAutocomplete.getAddressDetails(
+                        address
+                      );
+                      console.log(addressDetails.title);
+                    } catch (e) {
+                      console.log(e);
+                    }
                   }}
                 >
-                  <View style={styles.address} key={index}>
+                  <View style={styles.address}>
                     <Text>{address}</Text>
                   </View>
                 </TouchableOpacity>
