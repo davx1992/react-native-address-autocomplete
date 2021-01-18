@@ -1,6 +1,6 @@
 {
   "name": "react-native-address-autocomplete",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Autocomplete address natively without any API",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
