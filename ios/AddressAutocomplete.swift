@@ -42,7 +42,6 @@ class AddressAutocomplete: NSObject, MKLocalSearchCompleterDelegate {
             self.searchRequest?.naturalLanguageQuery = address
             self.localSearch = MKLocalSearch(request: self.searchRequest!);
             
-
             self.localSearch?.start { (response, error) in
                 guard let response = response else {
                     print("Error: \(error?.localizedDescription ?? "Unknown error").")
