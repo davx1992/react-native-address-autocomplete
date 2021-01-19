@@ -1,4 +1,4 @@
-import { NativeModules } from 'react-native';
+import { NativeModules, Platform } from 'react-native';
 
 type AddressDetails = {
   title: string;
@@ -21,6 +21,9 @@ class AddressAutocomplete {
     address: string
   ): Promise<AddressDetails> => {
     const promise = new Promise<AddressDetails>(async (resolve, reject) => {
+      if (Platform.OS === 'android') {
+        reject('Only IOs supported.');
+      }
       if (address.length > 0) {
         try {
           const details = await NativeAddressAutocomplete.getAddressDetails(
@@ -39,6 +42,9 @@ class AddressAutocomplete {
 
   static getAddressSuggestions = async (address: string): Promise<string[]> => {
     const promise = new Promise<string[]>(async (resolve, reject) => {
+      if (Platform.OS === 'android') {
+        reject('Only IOs supported.');
+      }
       if (address.length > 0) {
         try {
           const suggestions = await NativeAddressAutocomplete.getAddressSuggestions(
