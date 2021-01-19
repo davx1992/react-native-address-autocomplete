@@ -33,8 +33,7 @@
   },
   "keywords": [
     "react-native",
-    "ios",
-    "android"
+    "ios"
   ],
   "repository": "https://github.com/davx1992/react-native-address-autocomplete",
   "author": "davx1992 <davidsmurafa@gmail.com> (https://github.com/davx1992)",

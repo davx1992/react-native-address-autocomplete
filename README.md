@@ -16,12 +16,29 @@ pod install
 ## Usage
 
 ```js
-import AddressAutocomplete from "react-native-address-autocomplete";
+import AddressAutocomplete from 'react-native-address-autocomplete';
 
 // ...
 
-const suggestion = await AddressAutocomplete.getAddressSuggestions('New York');
+const suggestions = await AddressAutocomplete.getAddressSuggestions('New York');
+console.log(suggestions);
+// string[]
+
 const details = await AddressAutocomplete.getAddressDetails('New York');
+console.log(details);
+// {
+//   title: string;
+//   coordinate: {
+//     latitude: number;
+//     longitude: number;
+//   };
+//   region: {
+//     longitude: number;
+//     latitude: number;
+//     longitudeDelta: number;
+//     latitudeDelta: number;
+//   };
+// };
 ```
 
 You should fetch details, using string from suggestion on touch, as details will return only one result.
