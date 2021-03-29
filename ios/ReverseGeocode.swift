@@ -9,13 +9,6 @@ class ReverseGeocode: NSObject {
     @objc(reverseGeocodeLocation:withLatitude:withResolver:withRejecter:)
         func reverseGeocodeLocation(longitude: NSNumber, latitude: NSNumber , resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
             let location = CLLocation(latitude: latitude as! CLLocationDegrees, longitude: longitude as! CLLocationDegrees)
-            print(longitude);
-            print("longitude");
-
-            print(latitude);
-            print("latitude");
-
-            print(location);
             geocoder.reverseGeocodeLocation(location, preferredLocale: Locale.init(identifier: "en_US") , completionHandler: {(placemarks, error) in
                 guard let placemarks = placemarks else {
                     print("Reverse geocoder failed with error" + error!.localizedDescription)
@@ -31,7 +24,6 @@ class ReverseGeocode: NSObject {
                     "country": pm.country,
                     "zip": pm.postalCode
                 ]
-                print(pm)
                 resolve(addressDetails)
             })
                 
