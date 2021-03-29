@@ -5,6 +5,8 @@ This module is using MKLocalSearchCompleter Class in IOs, to provide suggestions
 Reason to use this over Google Places API is that this solution is free of charge, meanwhile other external API providers charge requests.
 This solution is only for IOs, as Android do not have free of charge service to get address suggesions.
 
+**[29.03.2021]** Implemented reverse geocoding, now you can reverse geocode coordinates.
+
 ## Installation
 
 ```sh
@@ -38,6 +40,15 @@ console.log(details);
 //     longitudeDelta: number;
 //     latitudeDelta: number;
 //   };
+// };
+
+const reverseGeocodeResult = await AddressAutocomplete.reverseGeocodeLocation(22.16887, 52.12333);
+console.log(reverseGeocodeResult);
+// {
+//  street: string;
+//  house: string;
+//  zip: number;
+//  country: string;
 // };
 ```
 
