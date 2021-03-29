@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useEffect } from 'react';
 import { useState } from 'react';
 
 import {
@@ -11,10 +11,27 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import AddressAutocomplete from 'react-native-address-autocomplete';
+import { getCurrentLocation, getLocationPermissions } from './LocationHelper';
 
 export default function App() {
   const [enteredAddress, setEnteredAddress] = useState('');
   const [suggestions, setSuggestions] = useState<string[]>([]);
+
+  useEffect(() => {
+    const reverseGeocode = async () => {
+      await getLocationPermissions();
+
+      const location = await getCurrentLocation();
+      console.log(location);
+
+      const addressDetails = await AddressAutocomplete.reverseGeocodeLocation(
+        location.coords.longitude,
+        location.coords.latitude
+      );
+      console.log(addressDetails);
+    };
+    reverseGeocode();
+  }, []);
 
   const onChange = async (text: string) => {
     setEnteredAddress(text);

@@ -1,6 +1,6 @@
 import { NativeModules, Platform } from 'react-native';
 
-type AddressDetails = {
+export type AddressDetails = {
   title: string;
   coordinate: {
     latitude: number;
@@ -14,7 +14,15 @@ type AddressDetails = {
   };
 };
 
+export type ReverseGeocodeResult = {
+  street: string;
+  house: string;
+  zip: number;
+  country: string;
+};
+
 const NativeAddressAutocomplete = NativeModules.AddressAutocomplete;
+const NativeGeocode = NativeModules.ReverseGeocode;
 
 class AddressAutocomplete {
   static getAddressDetails = async (
@@ -58,6 +66,33 @@ class AddressAutocomplete {
         reject('Address length should be greater than 0');
       }
     });
+    return promise;
+  };
+
+  static reverseGeocodeLocation = async (
+    longitude: number,
+    latitude: number
+  ): Promise<ReverseGeocodeResult> => {
+    const promise = new Promise<ReverseGeocodeResult>(
+      async (resolve, reject) => {
+        if (Platform.OS === 'android') {
+          reject('Only IOs supported.');
+        }
+        if (latitude && longitude) {
+          try {
+            const geocode = await NativeGeocode.reverseGeocodeLocation(
+              longitude,
+              latitude
+            );
+            resolve(geocode);
+          } catch (err) {
+            reject(err);
+          }
+        } else {
+          reject('No latitude or longitude provided');
+        }
+      }
+    );
     return promise;
   };
 }
