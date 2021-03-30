@@ -88,4 +88,8 @@ class AddressAutocomplete: NSObject, MKLocalSearchCompleterDelegate {
     func multiply(a: Float, b: Float, resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
         resolve(a*b)
     }
+
+    @objc static func requiresMainQueueSetup() -> Bool {
+        return false
+    }
 }
