@@ -19,6 +19,7 @@ export type ReverseGeocodeResult = {
   house: string;
   zip: number;
   country: string;
+  city: string;
 };
 
 const NativeAddressAutocomplete = NativeModules.AddressAutocomplete;
